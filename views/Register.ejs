@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Body and general background styling */
+        body {
+            background: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .text-center {
+            font-size: 14px;
+        }
+
+        .register-link {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Error message styling */
+        #error {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script>
+        function register(event) {
+            event.preventDefault();
+
+            var letters = /^[A-Za-z]+$/;
+            var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            var pwd_expression = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])/;
+
+            var name = document.getElementById("name").value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            var cpassword = document.getElementById("confirm-password").value;
+
+            if (!letters.test(name)) {
+                document.getElementById("error").innerHTML = "Name must contain only alphabet characters.";
+                return;
+            } else if (!filter.test(email)) {
+                document.getElementById("error").innerHTML = "Invalid email format.";
+                return;
+            } else if (!pwd_expression.test(password)) {
+                document.getElementById("error").innerHTML = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+                return;
+            } else if (password != cpassword) {
+                document.getElementById("error").innerHTML = "Passwords do not match.";
+                return;
+            }
+
+            document.getElementById("registerForm").submit();
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Create an Account</h5>
+        </div>
+        <div class="card-body">
+            <% if (error) { %>
+                <div id="error">
+                    <%= error %>
+                </div>
+            <% } %>
+            <form action="/createuser" method="POST" id="registerForm" onsubmit="register(event)">
+                <!-- Name input -->
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+
+                <!-- Email input -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+
+                <!-- Password input -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <!-- Confirm Password input -->
+                <div class="mb-3">
+                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm-password" name="confirm-password" required>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+            <div class="text-center mt-3">
+                Already have an account? <a href="/login" class="register-link">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link to Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

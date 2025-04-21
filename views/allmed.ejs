@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Seller Dashboard</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<script>
+        $(document).ready(function() {
+            $('#search').on('input', function() {
+                var searchText = $(this).val().toLowerCase();
+                
+                $('.medicine-row').each(function() {
+                    var name = $(this).find('.medicine-name').text().toLowerCase(); // Get medicine name
+                    
+                    if (name.includes(searchText)) {
+                        $(this).show(); // Show if it matches
+                    } else {
+                        $(this).hide(); // Hide if it doesn't match
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+
+<div class="col-lg-12 col-md-12 col-12">
+    <div class="container d-flex justify-content-center mt-3">
+        <input type="search" id="search" class="form-control w-50" placeholder="Search...">
+    </div>
+
+    <!-- Table for displaying medicines -->
+    <table class="table table-bordered mt-4">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Date Created</th>
+            </tr>
+        </thead>
+        <tbody id="medicine-container">
+            <% for(const medicines of products) { %>
+                <tr class="medicine-row">
+                    <td class="medicine-name"><%= medicines.name %></td>
+                    <td class="medicine-price"><%= medicines.price %></td>
+                    <td class="medicine-stock"><%= medicines.stock %></td>
+                    <td><%= medicines.date %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    
+<script>
+    // Example AJAX function (if needed for future)
+    function ajax() {
+        var query = document.getElementById("search").value;
+        console.log(query); // Placeholder for AJAX functionality if needed
+    }
+</script>
+
+</body>
+</html>

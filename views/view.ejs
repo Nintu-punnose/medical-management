@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Seller Dashboard</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  	<style type="text/css">
+  		.nav-items{
+  			font-size: 20px;
+  		}
+  		.nav-items:hover{
+  			background-color: rgb(210, 230, 173);
+  			color: white;
+  			border-radius: 10px;
+  		}
+		.notification{
+			cursor: pointer;
+		}
+/* Style for the search input */
+.search-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#search {
+    padding-left: 20px;
+    height: 40px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    transition: all 0.3s ease;
+}
+
+#search:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+
+
+
+
+  	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 bg-white shadow" >
+				<div class="head_details col-lg-12 d-flex justify-content-between">
+					<div class="Company_name">
+						<h2 class="mt-2 mb-2" style="color: black;">MedStore</h2>
+					</div>
+					<div class="username_details col-lg-2 col-md-6  d-flex justify-content-between">
+						<div class="notification m-2">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+  								<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
+							</svg>
+                            <span class="badge badge-danger p-1">8</span>
+						</div>
+						<div class="username">
+							<p class="m-2"><%= email %></p>
+						</div>
+					</div>
+                    
+				</div>
+			</div>
+		</div>
+		<div class="row" style="height: 100vh;">
+			<div class="side-bar col-lg-2 col-md-3 col-12 bg-primary shadow">
+				<div class="nav-link mt-1">
+					<ul class="navbar-nav" id="nav">
+						<li class="nav-items">
+							<a href="index" class="sidebar-link nav-link ml-3 text-white">Add Medicine</a>
+						</li>
+                        <li class="nav-items ">
+							<a href="view" class="sidebar-link nav-link ml-3 text-white">View Medicine</a>
+						</li>
+						<li class="nav-items">
+                            <form action="/logout" method="POST">
+                                <button type="submit" class="btn sidebar-link nav-link ml-3 text-white" style="font-size: 21px;">Logout</button>
+                            </form>
+                        </li>
+                        
+					</ul>
+				</div>
+			</div>
+
+			<div class="col-lg-10 col-md-9 col-12" >
+                
+             
+                <input type="text" id="search" placeholder="Search Medicines..." class="form-control mt-3" autocomplete="off" />
+
+            
+                <div id="output" class="search-results" style="display: block;">
+                  
+                </div>
+
+                   
+                <div class="row" id="row">
+                    <% for(const medicines of products){%>
+                    <div class="col-lg-6 col-md-12 col-12">
+                        <div class="card mt-4">
+                            <div class="card-body shadow">
+                                <h5 class="card-title text-primary"><%= medicines.name %></h5>
+                                <p><b>Price:</b> <%= medicines.price %></p>
+                                <p><b>Stock:</b> <%= medicines.stock %></p>
+                                <p><b>Date created: </b><%= medicines.date %></p>
+                                <a href="" class="btn btn-primary" data-toggle="modal" data-target="#editModal" onclick="editmodal('<%= medicines.id %>','<%= medicines.name %>','<%= medicines.price%>','<%= medicines.stock %>')">Edit</a>
+                                <a href="" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" onclick="deletemodal('<%= medicines.id %>')">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <ul class="pagination justify-content-center mt-3">
+                    <!-- Previous Page Link -->
+                    <% if (pagination.hasPrevPage) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= pagination.prevPage %>">Previous</a>
+                        </li>
+                    <% } %>
+                
+                    <!-- Page Number Links -->
+                    <% for (let page_number = 1; page_number <= pagination.totalPages; page_number++) { %>
+                        <% if (pagination.page === page_number) { %>
+                            <li class="page-item active">
+                                <span class="page-link"><%= page_number %></span>
+                            </li>
+                        <% } else { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= page_number %>"><%= page_number %></a>
+                            </li>
+                        <% } %>
+                    <% } %>
+                
+                    <!-- Next Page Link -->
+                    <% if (pagination.hasNextPage) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= pagination.nextPage %>">Next</a>
+                        </li>
+                    <% } %>
+                </ul>
+                
+			</div>
+
+            <!-- edit modal -->
+            
+            <div class="modal fade" id="editModal">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Edit</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/Editmedicine" method="POST" class="">
+                            <div class="mb-3">
+                                <input type="hidden" class="form-control" id="id" name="id" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="number" class="form-control" id="price" name="price" required>
+                            </div>
+                            <div class="mb-3">
+                              <input type="number" class="form-control" id="stock" name="stock" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Edit Data</button>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+              </div>
+
+
+              <!-- edit modal -->
+            
+              <div class="modal fade" id="deleteModal">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Delete</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                          <form action="/Delmedicine" method="POST" class="">
+                            <input type="hidden" class="form-control" id="deleteid" name="deleteid" required>
+                            <p>Are you sure you want to delete</p>
+                            <div class="delete-btm d-flex justify-content-end">
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                          </form>
+                      </div>
+                      </div>
+                  </div>
+                </div>
+		</div>
+	</div>
+
+    <script>
+        function editmodal(id,name,price,stock){
+            document.getElementById("id").value=id;
+            document.getElementById("name").value=name;
+            document.getElementById("price").value=price;
+            document.getElementById("stock").value=stock;
+        }
+
+        function deletemodal(id){
+            document.getElementById("deleteid").value=id;
+        }
+
+
+        function ajax(){
+            var a = document.getElementById("search").value;
+
+            var query =a;
+            
+            axios.post('/productAjax/create_product', {
+                name,
+                description,
+                price
+            })
+        } 
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      
+
+    <script>
+        $(document).ready(function() {
+            $('#search').on('input', function() {
+                var query = $(this).val().toLowerCase();
+        
+                if (query.length > 0) {
+                    $.ajax({
+                        url: '/search',
+                        method: 'GET',
+                        data: { name: query },
+                        success: function(data) {
+                            console.log(data); // Log the response to see what you are getting
+        
+                            $('.search-results').empty(); // Clear any previous results
+        
+                            if (data.length > 0) {
+
+                                data.forEach(function(medicine) {
+                                    // Dynamically generate the medicine cards
+                                    $('.search-results').append(`
+                                        <div class="col-lg-6 col-md-12 col-12">
+                                            <div class="card mt-4">
+                                                <div class="card-body shadow">
+                                                    <h5 class="card-title text-primary">${medicine.name}</h5>
+                                                    <p><b>Price:</b> ${medicine.price}</p>
+                                                    <p><b>Stock:</b> ${medicine.stock}</p>
+                                                    <p><b>Date created: </b>${medicine.date}</p>
+                                                    <a href="" class="btn btn-primary" data-toggle="modal" data-target="#editModal" onclick="editmodal('${medicine._id}', '${medicine.name}', '${medicine.price}', '${medicine.stock}')">Edit</a>
+                                                    <a href="" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" onclick="deletemodal('${medicine._id}')">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `);
+                                    document.getElementById("row").style.display="none"
+                                    $('.pagination').hide();
+                                });
+                            } else {
+                                $('.search-results').append('<p class="not-found ml-5 mt-5 text-danger" style="font-size:20px;">No results found</p>');
+                                $('.pagination').hide();
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                } else {
+                    $('.search-results').empty();
+                    $('.row').show();
+                    $('.pagination').show();
+                }
+            });
+        });
+        
+        
+        
+    </script>
+    
+</body>
+</html>
